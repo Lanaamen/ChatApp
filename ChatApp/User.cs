@@ -6,7 +6,7 @@ public class User
 
     public User(string userName)
     {
-        if (string.IsNullOrEmpty(userName))
+        if (string.IsNullOrEmpty(userName)) 
             throw new ArgumentException("Your username can't be empty! Choose wisely -.-");
 
         UserName = userName;
