@@ -12,7 +12,7 @@ using SocketIOClient;
     - [x] Se tidsstämpel, avsändare och meddelandetext för varje meddelande.
     - [ ] Se händelser i chatten, t.ex. när någon joinar eller lämnar.
     - [ ] Avsluta programmet snyggt (koppla ner och städa resurser).
-    
+
    De funktionella krav som kräver arv för G är:
    – Skicka och ta emot meddelanden i realtid
    – Visa tidsstämpel, avsändare och meddelandetext för varje meddelande
@@ -25,12 +25,14 @@ class Program
     {
         // Vi ansluter till Socket servern.
         await SocketManager.Connect();
-        EventHandler.EventListeners();
 
         Console.WriteLine("Write your username, be creative!");
         string? inputUser = Console.ReadLine();
         User chitchatUser = new User(inputUser);
         Console.Clear();
+
+        // emita ut en event här för att visa att en användare joinat.
+        await SocketManager._client.EmitAsync(SocketManager.EventJoined, new { chitchatUser.UserName });
 
         while (true)
         {
@@ -49,8 +51,13 @@ class Program
                 continue;
 
             if (input.ToLower() == "quit")
+
+            {
+                await SocketManager._client.EmitAsync(SocketManager.EventLeft, new { chitchatUser.UserName });
+                //emit left-event
                 break;
-            
+            }
+
             var chatMessage = new ChatMessage(inputUser, input);
             SocketManager.messages.Add(chatMessage);
             await SocketManager.SendMessage(chitchatUser, input);

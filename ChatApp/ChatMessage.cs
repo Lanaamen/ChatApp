@@ -12,4 +12,9 @@ public class ChatMessage
         UserMessage = userMessage;
         TimeStamp = DateTime.Now.ToString("HH:mm:ss");
     }
+
+    public override string ToString()
+    {
+        return $"[{TimeStamp}] {UserName}: {UserMessage}";
+    }
 }

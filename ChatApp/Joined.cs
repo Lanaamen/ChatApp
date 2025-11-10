@@ -2,9 +2,10 @@ namespace ChatApp;
 
 public class Joined : ChatMessage
 {
-    
     public Joined(string userName) :base (userName, userName)
     {
-        Console.WriteLine($"{userName} has joined the chitchat!");
+        var msg= new ChatMessage(userName, "has joined the chitchat!");
+        SocketManager.messages.Add(msg);
+        Console.WriteLine(msg);
     }
 }
