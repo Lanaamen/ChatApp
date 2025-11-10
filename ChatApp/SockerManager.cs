@@ -4,12 +4,16 @@ using SocketIOClient;
 
 public class SocketManager
 {
-    private static SocketIO _client;
+    public static SocketIO _client;
     private static readonly string Path = "/sys25d";
     public static List<ChatMessage> messages = new List<ChatMessage>();
     
     // Här kan vi välja ett unikt event namn för meddelanden.
-    private static readonly string EventName = "ChatMessage";
+    public static readonly string EventMessage = "ChatMessage";
+    public static readonly string EventJoined = "Joined";
+    public static readonly string EventLeft = "Left";
+
+
     
     // Här ska vi ansluta till socketio servern.
     public static async Task Connect()
@@ -20,22 +24,7 @@ public class SocketManager
         {
             Path = Path
         });
-
-        // Här nedan anger vi de events vi vill lyssna på
-        // samt en handler för varje event som ska köras.
-        _client.On(EventName, response =>
-        {
-            try
-            {
-                var msg = response.GetValue<ChatMessage>();
-                Console.WriteLine($"[{msg.TimeStamp}] {msg.UserName}: {msg.UserMessage}");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error: {e.Message}");
-            }
-        });
-
+        
         // Kod vi kan köra när vi etablerar en anslutning
         _client.OnConnected += (sender, args) => { Console.WriteLine("Connected to the Chitchat!"); };
 
