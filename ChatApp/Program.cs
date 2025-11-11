@@ -6,55 +6,39 @@ namespace ChatApp;
 using SocketIOClient;
 
 /*
-    - [x] Ange användarnamn vid start (validera att det inte är tomt).
     - [x] Ansluta till chatten och se status (ansluten/urkopplad).
     - [x] Skicka och ta emot meddelanden i realtid.
     - [x] Se tidsstämpel, avsändare och meddelandetext för varje meddelande.
-    - [ ] Se händelser i chatten, t.ex. när någon joinar eller lämnar.
-    - [ ] Avsluta programmet snyggt (koppla ner och städa resurser).
-
-   De funktionella krav som kräver arv för G är:
-   – Skicka och ta emot meddelanden i realtid
-   – Visa tidsstämpel, avsändare och meddelandetext för varje meddelande
-   – Visa händelser i chatten, t.ex. när någon ansluter eller lämnar
+    - [x] Se händelser i chatten, t.ex. när någon joinar eller lämnar.
+    - [x] Avsluta programmet snyggt (koppla ner och städa resurser).
  */
-
 class Program
 {
     static async Task Main(string[] args)
     {
-        // Vi ansluter till Socket servern.
-        await SocketManager.Connect();
-
         Console.WriteLine("Write your username, be creative!");
         string? inputUser = Console.ReadLine();
         User chitchatUser = new User(inputUser);
         Console.Clear();
+
+        // Vi ansluter till Socket servern.
+        await SocketManager.Connect();
 
         // emita ut en event här för att visa att en användare joinat.
         await SocketManager._client.EmitAsync(SocketManager.EventJoined, new { chitchatUser.UserName });
 
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine($"[-----ChitChat-----]\n");
-
-            foreach (var message in SocketManager.messages)
-            {
-                Console.WriteLine($"[{message.TimeStamp}] {message.UserName}: {message.UserMessage}");
-            }
-
-            Console.Write("\nEnter your message (or 'quit' to exit): ");
+            SocketManager.ClearChat();
             string? input = Console.ReadLine();
 
             if (string.IsNullOrEmpty(input))
                 continue;
 
             if (input.ToLower() == "quit")
-
             {
-                await SocketManager._client.EmitAsync(SocketManager.EventLeft, new { chitchatUser.UserName });
                 //emit left-event
+                await SocketManager._client.EmitAsync(SocketManager.EventLeft, new { chitchatUser.UserName });
                 break;
             }
 

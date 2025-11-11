@@ -1,5 +1,4 @@
 namespace ChatApp;
-
 using SocketIOClient;
 
 public class SocketManager
@@ -7,26 +6,20 @@ public class SocketManager
     public static SocketIO _client;
     private static readonly string Path = "/sys25d";
     public static List<ChatMessage> messages = new List<ChatMessage>();
-
-    // Här kan vi välja ett unikt event namn för meddelanden.
+    
     public static readonly string EventMessage = "ChatMessage";
     public static readonly string EventJoined = "Joined";
     public static readonly string EventLeft = "Left";
 
-    // Här ska vi ansluta till socketio servern.
     public static async Task Connect()
     {
-        // Vi skapar en instans av SocketIO och konfigurerar den med
-        // våran server url och path.
+        // Vi skapar en instans av SocketIO och konfigurerar den med vår server url och path.
         _client = new SocketIO("wss://api.leetcode.se", new SocketIOOptions
         {
             Path = Path
         });
 
-        // Kod vi kan köra när vi etablerar en anslutning
         _client.OnConnected += (sender, args) => { Console.WriteLine("Connected to the Chitchat!"); };
-
-        // Kod vi kan köra när vi tappar anslutningen
         _client.OnDisconnected += (sender, args) => { Console.WriteLine("Disconnected to the Chitchat!"); };
 
         _client.On(EventMessage, response =>
@@ -35,7 +28,7 @@ public class SocketManager
             {
                 var msg = response.GetValue<ChatMessage>();
                 messages.Add(msg);
-                Console.WriteLine($"[{msg.TimeStamp}] {msg.UserName}: {msg.UserMessage}");
+                ClearChat();
             }
             catch (Exception e)
             {
@@ -48,9 +41,9 @@ public class SocketManager
             try
             {
                 var userName = response.GetValue<Joined>().UserName;
-                var msg= new ChatMessage(userName, "has joined the chitchat!");
+                var msg= new ChatMessage(userName, "has joined the Chitchat!");
                 messages.Add(msg);
-                //Console.WriteLine(msg);
+                ClearChat();
             }
             catch (Exception e)
             {
@@ -63,9 +56,9 @@ public class SocketManager
             try
             {
                 var userName = response.GetValue<Left>().UserName;
-                var msg= new ChatMessage(userName, "has left the chitchat!");
+                var msg= new ChatMessage(userName, "has left the Chitchat!");
                 messages.Add(msg);
-                Console.WriteLine(msg);
+                ClearChat();
             }
             catch (Exception e)
             {
@@ -78,10 +71,25 @@ public class SocketManager
         // Vi lägger en fördröjning på 2000ms (2s) för att se till att klienten har anslutit och satt upp allt.
         await Task.Delay(1000);
     }
+    
+    public static void ClearChat()
+    {
+        Console.Clear();
+        Console.WriteLine($"[-----ChitChat-----]\n");
+            
+        foreach (var message in SocketManager.messages)
+        {
+            Console.WriteLine($"[{message.TimeStamp}] {message.UserName}: {message.UserMessage}");
+        }
+
+        Console.Write($"\r");
+        Console.Write("\nEnter your message (or 'quit' to exit): ");
+    }
 
     public static async Task SendMessage(User user, string userMessage)
     {
         var message = new ChatMessage(user.UserName, userMessage);
         await _client.EmitAsync("ChatMessage", message);
+        Console.WriteLine(message);
     }
 }
