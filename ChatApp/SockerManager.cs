@@ -13,7 +13,6 @@ public class SocketManager
 
     public static async Task Connect()
     {
-        // Vi skapar en instans av SocketIO och konfigurerar den med vår server url och path.
         _client = new SocketIO("wss://api.leetcode.se", new SocketIOOptions
         {
             Path = Path
@@ -67,8 +66,6 @@ public class SocketManager
         });
         
         await _client.ConnectAsync();
-
-        // Vi lägger en fördröjning på 2000ms (2s) för att se till att klienten har anslutit och satt upp allt.
         await Task.Delay(1000);
     }
     
