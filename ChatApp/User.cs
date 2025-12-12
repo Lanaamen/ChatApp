@@ -6,12 +6,6 @@ public class User
 
     public User(string userName)
     {
-        while (string.IsNullOrWhiteSpace(userName))
-        {
-            Console.WriteLine("Your username can't be empty! Choose wisely -.-");
-            userName = Console.ReadLine();
-        }
-
         UserName = userName;
     }
 }

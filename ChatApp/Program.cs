@@ -8,6 +8,13 @@ class Program
     {
         Console.WriteLine("Write your username, be creative!");
         string? inputUser = Console.ReadLine();
+        
+        while (string.IsNullOrWhiteSpace(inputUser))
+        {
+            Console.WriteLine("Your username can't be empty! Choose wisely -.-");
+            inputUser = Console.ReadLine();
+        }
+        
         User chitchatUser = new User(inputUser);
         Console.Clear();
         
