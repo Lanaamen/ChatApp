@@ -6,8 +6,11 @@ public class User
 
     public User(string userName)
     {
-        if (string.IsNullOrEmpty(userName)) 
-            throw new ArgumentException("Your username can't be empty! Choose wisely -.-");
+        while (string.IsNullOrWhiteSpace(userName))
+        {
+            Console.WriteLine("Your username can't be empty! Choose wisely -.-");
+            userName = Console.ReadLine();
+        }
 
         UserName = userName;
     }
